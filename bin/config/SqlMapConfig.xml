@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration 
+	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	
+	<!-- settings的一些设置 	
+			<settings>	-->
+		<!-- 打开延迟加载的开关 
+			<setting name="lazyLoadingEnabled" value="true"/>-->
+		<!-- 将积极加载改为消极加载按需要加载 
+			<setting name="aggressiveLazyLoading" value="false"/>-->
+		<!-- 开启二级缓存 
+			<setting name="cacheEnabled" value="true"/>	-->
+	<!-- 	</settings>-->
+
+	<typeAliases>
+		<!--  <typeAlias type="com.itheima.domain.User" alias="user"/> -->
+		<!-- 批量定义别名，自动扫描包中的类，别名就是类名（首字母大小写均可以） -->
+		<package name="com.itheima.domain"/> 		
+	</typeAliases>
+	
+	<environments default="development">
+		<environment id="development">
+			<!-- 配置jdbc的事务管理，事务的控制由mybatis -->	
+			<transactionManager type="JDBC"/>
+			
+			<!-- 数据库连接池，由mybatis管理 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver"/>
+				<property name="url" value="jdbc:mysql://localhost:3306/mybatis"/>
+				<property name="username" value="root"/>
+				<property name="password" value="root"/>
+			</dataSource>
+		</environment>
+	</environments>
+	
+	
+	<mappers>
+		<mapper resource="config/sqlmap/User.xml"/>
+		<!-- <mapper resource="com/itheima/mapper/UserMapper.xml"/> -->
+		<!-- <mapper class="com.itheima.mapper.UserMapper"/> -->
+		
+		<!-- 批量加载mapper -->
+		<package name="com.itheima.mapper"/>
+	</mappers>
+</configuration>

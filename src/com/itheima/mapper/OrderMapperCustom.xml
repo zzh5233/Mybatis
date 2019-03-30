@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.itheima.mapper.OrderMapperCustom">
+
+	<!-- 查询用户及购买商品的信息，使用resultMap 多对多 -->
+	<select id="findUserAndItemResultMap" resultMap="userAndItemResultMap">
+			SELECT
+	     	`order`.*,
+	    	`user`.username,
+	     	`user`.password,
+	      	`user`.birthday,
+			orderdetail.id orderdetail_id,
+			orderdetail.item_id,
+			orderdetail.item_num,
+			orderdetail.order_id,
+			item.`name` item_name,
+			item.detail item_detail,
+			item.price item_price
+    	 FROM
+      		`order`,
+      		`user`,
+			 orderdetail,
+			 item
+    	 WHERE `order`.user_id=`user`.id AND orderdetail.order_id = `order`.id AND orderdetail.item_id=item.id
+	</select>
+	
+	<!-- 定义查询用户及购买商品的resultMap -->
+	<resultMap type="com.itheima.domain.User" id="userAndItemResultMap">
+		<!-- 封装用户信息 -->
+		<id column="user_id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="password" property="password"/>
+		<result column="birthday" property="birthday"/>
+		
+		<!-- 封装订单的信息 -->
+		<collection property="orders" ofType="com.itheima.domain.Order">
+			<id column="id" property="id"/>
+			<result column="user_id" property="user_id"/>
+			<result column="number" property="number"/>
+			<result column="createtime" property="createtime"/>
+			<result column="note" property="note"/>
+			
+			<!-- 封装订单详情的信息 -->
+			<collection property="orderDetails" ofType="com.itheima.domain.OrderDetail">
+				<id column="orderdetail_id" property="id"/>
+				<result column="item_id" property="itemId"/>
+				<result column="item_num" property="itemNum"/>
+				<result column="order_id" property="orderId"/>
+				
+				<!-- 封装商品信息 -->
+				<collection property="items" ofType="com.itheima.domain.Item">
+					<id column="item_id" property="id"/>
+					<result column="item_name" property="name"/>
+					<result column="item_detail" property="detail"/>
+					<result column="item_price" property="price"/>
+				</collection>
+				
+			</collection>	
+				
+		</collection>
+	
+	</resultMap>
+	
+	<!-- 查询订单关联查询用户及订单明细 使用resultMap 一对多-->
+	<select id="findOrderAndOrderDetailResultMap" resultMap="orderAndOrderDetaliResultMap">
+		SELECT
+	     	`order`.*,
+	    	`user`.username,
+	     	`user`.password,
+	      	`user`.birthday,
+			orderdetail.id orderdetail_id,
+			orderdetail.item_id,
+			orderdetail.item_num,
+			orderdetail.order_id
+    	 FROM
+      		`order`,
+      		`user`,
+			orderdetail
+    	 WHERE `order`.user_id=`user`.id AND orderdetail.order_id = `order`.id
+	</select>
+
+	
+	<!-- 定义订单关联用户及订单明细的resultMap -->
+	<resultMap type="com.itheima.domain.Order" id="orderAndOrderDetaliResultMap" 
+			extends="orderAndUserResultMap">
+		<!-- 封装订单信息 -->
+		<!-- 封装用户信息 -->
+	
+		<!-- 封装订单明细信息  ofType-->
+		<collection property="orderDetails" ofType="com.itheima.domain.OrderDetail">
+			<id column="orderdetail_id" property="id"/>
+			<result column="item_id" property="itemId"/>
+			<result column="item_num" property="itemNum"/>
+			<result column="order_id" property="orderId"/>
+		</collection>
+	
+	</resultMap>
+	
+	<!-- 查询订单关联查询用户   用resultMap来映射接受  一对一查询  -->
+	<select id="findOrderUserResultMap" resultMap="orderAndUserResultMap">
+		SELECT
+	     	`order`.*,
+	    	`user`.username,
+	     	`user`.password,
+	      	`user`.birthday
+    	 FROM
+      		`order`,
+      		`user`
+    	 WHERE `order`.user_id=`user`.id;
+	</select>
+	
+	<!-- 定义resultMap -->
+	<resultMap type="com.itheima.domain.Order" id="orderAndUserResultMap">
+		<!-- 映射订单信息 -->
+		<id column="id" property="id"/>
+		<result column="user_id" property="user_id"/>
+		<result column="number" property="number"/>
+		<result column="createtime" property="createtime"/>
+		<result column="note" property="note"/>
+		
+		<!-- 封装用户信息  一对一-->
+		<association property="user" javaType="com.itheima.domain.User">
+			<id column="user_id" property="id"/>
+			<result column="username" property="username"/>
+			<result column="password" property="password"/>
+			<result column="birthday" property="birthday"/>
+		</association>
+	
+	</resultMap>
+	
+	<!-- 查询订单关联查询用户  一对一查询    -->
+	<select id="findOrderUser" resultType="com.itheima.domain.OrderCustom">
+		SELECT
+	     	`order`.*,
+	    	`user`.username,
+	     	`user`.password,
+	      	`user`.birthday
+    	 FROM
+      		`order`,
+      		`user`
+    	 WHERE `order`.user_id=`user`.id;
+	</select>
+
+
+</mapper>	
